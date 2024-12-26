@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Song Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="snow-canvas"></canvas>
+    <div id="notice-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p>Please <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">request temporary access</a> to the CORS Anywhere demo server before starting the game.</p>
+        </div>
+    </div>
+    <div id="main-screen">
+        <img src="logo.png" alt="Game Logo" id="logo">
+        <button id="start-game">Start the Game</button>
+    </div>
+    <div id="game-screen" style="display: none;">
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <audio id="song-audio" controls style="display: none;"></audio>
+        <h2 id="guess-text">Do you recognize this song?</h2>
+        <div id="choices"></div>
+        <button id="back-to-menu">Back to Menu</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

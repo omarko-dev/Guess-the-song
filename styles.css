@@ -1,0 +1,160 @@
+body {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #FFA27F, #FFFFFF);
+    color: #333;
+    overflow: hidden;
+}
+
+#main-screen, #game-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+#logo {
+    width: 600px;
+    margin-bottom: 20px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #97BE5A;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    animation: fadeIn 2s ease-in-out;
+}
+
+button:hover {
+    background-color: #86a84e;
+    transform: scale(1.05);
+}
+
+#progress-bar-container {
+    width: 100%;
+    background-color: #f3f3f3;
+    height: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#progress-bar {
+    width: 100%;
+    height: 100%;
+    background-color: #97BE5A;
+    transition: width 10s linear;
+}
+
+#guess-text {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    animation: fadeIn 2s ease-in-out;
+}
+
+#choices {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+#choices button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #97BE5A;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#choices button:hover {
+    background-color: #86a84e;
+    transform: scale(1.05);
+}
+
+#back-to-menu {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #FF0000;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#back-to-menu:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 500px;
+    text-align: left;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#snow-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
