@@ -65,6 +65,13 @@ button:hover {
     animation: fadeIn 2s ease-in-out;
 }
 
+#streak-counter {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    animation: fadeIn 2s ease-in-out;
+}
+
 #choices {
     margin-top: 20px;
     display: flex;
@@ -89,8 +96,22 @@ button:hover {
     transform: scale(1.05);
 }
 
-#back-to-menu {
+#game-over-message {
     margin-top: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #FF0000;
+    animation: fadeIn 2s ease-in-out;
+}
+
+#game-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+#back-to-menu, #restart-game {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: 600;
@@ -102,9 +123,30 @@ button:hover {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-#back-to-menu:hover {
+#back-to-menu:hover, #restart-game:hover {
     background-color: #cc0000;
     transform: scale(1.05);
+}
+
+#emoji-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.emoji {
+    position: absolute;
+    font-size: 24px;
+    animation: fall 3s linear infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
 }
 
 .modal {
@@ -154,6 +196,7 @@ button:hover {
     z-index: 0;
 }
 
+/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
