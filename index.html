@@ -24,10 +24,17 @@
             <div id="progress-bar"></div>
         </div>
         <audio id="song-audio" controls style="display: none;"></audio>
+        <audio id="correct-sound" src="sound-effect.mp3" preload="auto"></audio>
         <h2 id="guess-text">Do you recognize this song?</h2>
+        <div id="streak-counter">Streak: 0</div>
         <div id="choices"></div>
-        <button id="back-to-menu">Back to Menu</button>
+        <div id="game-over-message" style="display: none;">Game Over! The correct answer was <span id="correct-answer"></span>.</div>
+        <div id="game-buttons">
+            <button id="back-to-menu">Back to Menu</button>
+            <button id="restart-game" style="display: none;">Restart Game</button>
+        </div>
     </div>
+    <div id="emoji-rain" style="display: none;"></div>
     <script src="script.js"></script>
 </body>
 </html>
