@@ -1,5 +1,6 @@
 document.getElementById('start-game').addEventListener('click', startGame);
 document.getElementById('back-to-menu').addEventListener('click', backToMenu);
+document.getElementById('restart-game').addEventListener('click', restartGame);
 
 let playedSongs = new Set();
 let currentSong = null;
@@ -7,6 +8,7 @@ let audio = new Audio();
 let progressBarTimeout;
 let snowEnabled = true;
 let snowflakes = [];
+let streak = 0;
 
 window.onload = function() {
     const modal = document.getElementById('notice-modal');
@@ -29,6 +31,8 @@ window.onload = function() {
 function startGame() {
     document.getElementById('main-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'flex';
+    document.getElementById('restart-game').style.display = 'none';
+    document.getElementById('game-over-message').style.display = 'none';
     fetchSongs();
 }
 
@@ -37,6 +41,12 @@ function backToMenu() {
     document.getElementById('main-screen').style.display = 'flex';
     audio.pause();
     clearTimeout(progressBarTimeout);
+}
+
+function restartGame() {
+    streak = 0;
+    updateStreakCounter();
+    startGame();
 }
 
 async function fetchSongs() {
@@ -73,7 +83,6 @@ function playRandomSong(songs) {
 
     startProgressBar();
     displayChoices(songs, randomSong);
-
 
     clearTimeout(progressBarTimeout);
     progressBarTimeout = setTimeout(() => {
@@ -114,11 +123,32 @@ function getRandomSongs(songs, count) {
 function checkAnswer(selectedSong, correctSong) {
     clearTimeout(progressBarTimeout);
     if (selectedSong === correctSong) {
-        alert('Correct!');
+        streak++;
+        updateStreakCounter();
+        playCorrectSound();
+        startEmojiRain();
+        setTimeout(() => {
+            stopEmojiRain();
+            startGame();
+        }, 3000);
     } else {
-        alert('Wrong! The correct answer was ' + correctSong.title);
+        streak = 0;
+        updateStreakCounter();
+        displayGameOverMessage(correctSong.title);
     }
-    startGame();
+}
+
+function updateStreakCounter() {
+    const streakCounter = document.getElementById('streak-counter');
+    streakCounter.textContent = 'Streak: ' + streak;
+}
+
+function displayGameOverMessage(correctAnswer) {
+    const gameOverMessage = document.getElementById('game-over-message');
+    const correctAnswerSpan = document.getElementById('correct-answer');
+    correctAnswerSpan.textContent = correctAnswer;
+    gameOverMessage.style.display = 'block';
+    document.getElementById('restart-game').style.display = 'block';
 }
 
 function displayErrorMessage() {
@@ -162,4 +192,29 @@ function animateSnow() {
     }
 
     requestAnimationFrame(animateSnow);
+}
+
+function startEmojiRain() {
+    const emojiRain = document.getElementById('emoji-rain');
+    emojiRain.style.display = 'block';
+    const emojis = ['🎄', '🎅', '❄️', '⛄', '🎁'];
+    for (let i = 0; i < 50; i++) {
+        const emoji = document.createElement('div');
+        emoji.classList.add('emoji');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.animationDuration = Math.random() * 2 + 3 + 's';
+        emojiRain.appendChild(emoji);
+    }
+}
+
+function stopEmojiRain() {
+    const emojiRain = document.getElementById('emoji-rain');
+    emojiRain.style.display = 'none';
+    emojiRain.innerHTML = '';
+}
+
+function playCorrectSound() {
+    const correctSound = document.getElementById('correct-sound');
+    correctSound.play();
 }
