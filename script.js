@@ -1,6 +1,9 @@
 document.getElementById('start-game').addEventListener('click', startGame);
 document.getElementById('back-to-menu').addEventListener('click', backToMenu);
 document.getElementById('restart-game').addEventListener('click', restartGame);
+document.getElementById('volume-slider').addEventListener('input', updateVolume);
+document.getElementById('pause-button').addEventListener('click', togglePause);
+document.getElementById('resume-button').addEventListener('click', togglePause);
 
 let playedSongs = new Set();
 let currentSong = null;
@@ -9,6 +12,10 @@ let progressBarTimeout;
 let snowEnabled = true;
 let snowflakes = [];
 let streak = 0;
+let isPaused = false;
+let remainingTime = 10000;
+let pauseStartTime;
+let progressBarWidth;
 
 window.onload = function() {
     const modal = document.getElementById('notice-modal');
@@ -60,7 +67,17 @@ async function fetchSongs() {
             title: track.title,
             url: track.preview
         }));
-        playRandomSong(songs);
+        const additionalResponse = await fetch('https://cors-anywhere.herokuapp.com/https://api.deezer.com/editorial/0/charts');
+        if (!additionalResponse.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const additionalData = await additionalResponse.json();
+        const additionalSongs = additionalData.tracks.data.map(track => ({
+            title: track.title,
+            url: track.preview
+        }));
+        const allSongs = [...songs, ...additionalSongs];
+        playRandomSong(allSongs);
     } catch (error) {
         displayErrorMessage();
         console.error('Error fetching songs:', error);
@@ -78,17 +95,18 @@ function playRandomSong(songs) {
 
     audio.src = currentSong.url;
     audio.currentTime = 0;
-    audio.volume = 0.5;
+    audio.volume = document.getElementById('volume-slider').value;
     audio.play();
 
+    clearTimeout(progressBarTimeout);
+    remainingTime = 10000; // Reset remaining time to 10 seconds
     startProgressBar();
     displayChoices(songs, randomSong);
 
-    clearTimeout(progressBarTimeout);
     progressBarTimeout = setTimeout(() => {
         audio.pause();
         checkAnswer(null, currentSong);
-    }, 10000);
+    }, remainingTime);
 }
 
 function startProgressBar() {
@@ -97,7 +115,7 @@ function startProgressBar() {
     progressBar.style.width = '100%';
 
     progressBar.offsetWidth;
-    progressBar.style.transition = 'width 10s linear';
+    progressBar.style.transition = `width ${remainingTime / 1000}s linear`;
     progressBar.style.width = '0%';
 }
 
@@ -216,5 +234,44 @@ function stopEmojiRain() {
 
 function playCorrectSound() {
     const correctSound = document.getElementById('correct-sound');
+    correctSound.volume = document.getElementById('volume-slider').value;
     correctSound.play();
+}
+
+function updateVolume() {
+    const volume = document.getElementById('volume-slider').value;
+    audio.volume = volume;
+    const correctSound = document.getElementById('correct-sound');
+    correctSound.volume = volume;
+    document.getElementById('volume-label').textContent = Math.round(volume * 100);
+}
+
+function togglePause() {
+    const pauseOverlay = document.getElementById('pause-overlay');
+    const progressBar = document.getElementById('progress-bar');
+    if (isPaused) {
+        pauseOverlay.style.display = 'none';
+        const pauseEndTime = Date.now();
+        remainingTime -= pauseEndTime - pauseStartTime;
+        audio.play();
+        progressBar.style.transition = 'none';
+        progressBar.offsetWidth; // Trigger reflow
+        progressBar.style.transition = `width ${remainingTime / 1000}s linear`;
+        progressBar.style.width = '0%';
+        progressBarTimeout = setTimeout(() => {
+            audio.pause();
+            checkAnswer(null, currentSong);
+        }, remainingTime);
+        isPaused = false;
+    } else {
+        pauseOverlay.style.display = 'flex';
+        audio.pause();
+        clearTimeout(progressBarTimeout);
+        const computedStyle = window.getComputedStyle(progressBar);
+        progressBarWidth = parseFloat(computedStyle.getPropertyValue('width')) / progressBar.parentElement.clientWidth * 100;
+        progressBar.style.transition = 'none';
+        progressBar.style.width = `${progressBarWidth}%`;
+        pauseStartTime = Date.now();
+        isPaused = true;
+    }
 }
