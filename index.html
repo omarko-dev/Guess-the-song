@@ -33,8 +33,19 @@
             <button id="back-to-menu">Back to Menu</button>
             <button id="restart-game" style="display: none;">Restart Game</button>
         </div>
+        <div id="volume-control">
+            <label for="volume-slider">Volume: <span id="volume-label">50</span>%</label>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        </div>
+        <button id="pause-button" class="pause-button">Pause</button>
     </div>
     <div id="emoji-rain" style="display: none;"></div>
+    <div id="pause-overlay" class="pause-overlay" style="display: none;">
+        <div class="pause-content">
+            <h2>Your game is paused</h2>
+            <button id="resume-button">Resume</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
