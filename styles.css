@@ -128,6 +128,46 @@ button:hover {
     transform: scale(1.05);
 }
 
+#volume-control {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#volume-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+    border-radius: 5px;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#volume-slider:hover {
+    opacity: 1;
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
 #emoji-rain {
     position: fixed;
     top: 0;
@@ -147,6 +187,66 @@ button:hover {
 @keyframes fall {
     0% { transform: translateY(-100%); }
     100% { transform: translateY(100vh); }
+}
+
+.pause-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #FF0000;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pause-button:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+.pause-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+.pause-content {
+    text-align: center;
+    color: #fff;
+}
+
+.pause-content h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.pause-content button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #97BE5A;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pause-content button:hover {
+    background-color: #86a84e;
+    transform: scale(1.05);
 }
 
 .modal {
@@ -196,7 +296,6 @@ button:hover {
     z-index: 0;
 }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
