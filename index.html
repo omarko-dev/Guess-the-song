@@ -6,6 +6,9 @@
     <title>Guess the Song Game</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
     <canvas id="snow-canvas"></canvas>
@@ -18,6 +21,7 @@
     <div id="main-screen">
         <img src="logo.png" alt="Game Logo" id="logo">
         <button id="start-game">Start the Game</button>
+        <button id="leaderboard-button">Leaderboard</button>
     </div>
     <div id="game-screen" style="display: none;">
         <div id="progress-bar-container">
@@ -28,7 +32,13 @@
         <h2 id="guess-text">Do you recognize this song?</h2>
         <div id="streak-counter">Streak: 0</div>
         <div id="choices"></div>
-        <div id="game-over-message" style="display: none;">Game Over! The correct answer was <span id="correct-answer"></span>.</div>
+        <div id="game-over-message" style="display: none;">
+            Game Over! The correct answer was <span id="correct-answer"></span>.
+            <div id="name-input-container">
+                <input type="text" id="username-input" placeholder="Enter your name (we will save it for later)">
+                <button id="submit-name">Submit</button>
+            </div>
+        </div>
         <div id="game-buttons">
             <button id="back-to-menu">Back to Menu</button>
             <button id="restart-game" style="display: none;">Restart Game</button>
@@ -44,6 +54,13 @@
         <div class="pause-content">
             <h2>Your game is paused</h2>
             <button id="resume-button">Resume</button>
+        </div>
+    </div>
+    <div id="leaderboard-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="leaderboard-close-button">&times;</span>
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list"></ul>
         </div>
     </div>
     <script src="script.js"></script>
