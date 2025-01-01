@@ -1,9 +1,88 @@
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAiIrOvbuXw_eFo3H9l7s4QULqrPSqOPFU",
+    authDomain: "guess-the-song-dd37a.firebaseapp.com",
+    databaseURL: "https://guess-the-song-dd37a-default-rtdb.firebaseio.com",
+    projectId: "guess-the-song-dd37a",
+    storageBucket: "guess-the-song-dd37a.appspot.com",
+    messagingSenderId: "672368690487",
+    appId: "1:672368690487:web:367ad06d5acebb73d2c6b2",
+    measurementId: "G-4KRYL8QZ15"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+let playerName = localStorage.getItem('playerName') || '';
+
+// Save score to leaderboard
+function saveScore(username, score) {
+    const leaderboardRef = database.ref('leaderboard');
+    leaderboardRef.orderByChild('username').equalTo(username).once('value', snapshot => {
+        if (snapshot.exists()) {
+            const userData = snapshot.val();
+            const userKey = Object.keys(userData)[0];
+            const userScore = userData[userKey].score;
+            if (score > userScore) {
+                leaderboardRef.child(userKey).update({ score: score });
+            }
+        } else {
+            const newScoreRef = leaderboardRef.push();
+            newScoreRef.set({
+                username: username,
+                score: score
+            });
+        }
+    });
+}
+
+// Retrieve leaderboard data
+function getLeaderboard(callback) {
+    const leaderboardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
+    leaderboardRef.once('value', snapshot => {
+        const leaderboard = [];
+        snapshot.forEach(childSnapshot => {
+            leaderboard.push(childSnapshot.val());
+        });
+        callback(leaderboard.reverse());
+    });
+}
+
 document.getElementById('start-game').addEventListener('click', startGame);
 document.getElementById('back-to-menu').addEventListener('click', backToMenu);
 document.getElementById('restart-game').addEventListener('click', restartGame);
 document.getElementById('volume-slider').addEventListener('input', updateVolume);
 document.getElementById('pause-button').addEventListener('click', togglePause);
 document.getElementById('resume-button').addEventListener('click', togglePause);
+document.getElementById('leaderboard-button').addEventListener('click', () => {
+    getLeaderboard(leaderboard => {
+        const leaderboardList = document.getElementById('leaderboard-list');
+        leaderboardList.innerHTML = '';
+        leaderboard.forEach((entry, index) => {
+            const listItem = document.createElement('li');
+            let medal = '';
+            if (index === 0) {
+                medal = '🥇'; // Gold medal
+            } else if (index === 1) {
+                medal = '🥈'; // Silver medal
+            } else if (index === 2) {
+                medal = '🥉'; // Bronze medal
+            }
+            listItem.textContent = `${index + 1}. ${medal} ${entry.username}: ${entry.score}`;
+            leaderboardList.appendChild(listItem);
+        });
+        document.getElementById('leaderboard-modal').style.display = 'block';
+    });
+});
+document.getElementById('leaderboard-close-button').addEventListener('click', () => {
+    document.getElementById('leaderboard-modal').style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('leaderboard-modal')) {
+        document.getElementById('leaderboard-modal').style.display = 'none';
+    }
+});
 
 let playedSongs = new Set();
 let currentSong = null;
@@ -123,9 +202,20 @@ function displayChoices(songs, correctSong) {
     const choicesDiv = document.getElementById('choices');
     choicesDiv.innerHTML = '';
     const choices = [correctSong, ...getRandomSongs(songs, 3)];
-    choices.sort(() => Math.random() - 0.5);
+    const uniqueChoices = Array.from(new Set(choices.map(choice => choice.title)))
+        .map(title => choices.find(choice => choice.title === title));
 
-    choices.forEach(choice => {
+    // If we have less than 4 unique choices, add more random unique songs
+    while (uniqueChoices.length < 4) {
+        const additionalChoices = getRandomSongs(songs, 1);
+        if (!uniqueChoices.some(choice => choice.title === additionalChoices[0].title)) {
+            uniqueChoices.push(additionalChoices[0]);
+        }
+    }
+
+    uniqueChoices.sort(() => Math.random() - 0.5);
+
+    uniqueChoices.forEach(choice => {
         const button = document.createElement('button');
         button.textContent = choice.title;
         button.addEventListener('click', () => checkAnswer(choice, correctSong));
@@ -134,7 +224,7 @@ function displayChoices(songs, correctSong) {
 }
 
 function getRandomSongs(songs, count) {
-    const shuffled = songs.sort(() => 0.5 - Math.random());
+    const shuffled = songs.filter(song => song.title !== currentSong.title).sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 }
 
@@ -150,8 +240,6 @@ function checkAnswer(selectedSong, correctSong) {
             startGame();
         }, 3000);
     } else {
-        streak = 0;
-        updateStreakCounter();
         displayGameOverMessage(correctSong.title);
     }
 }
@@ -167,6 +255,23 @@ function displayGameOverMessage(correctAnswer) {
     correctAnswerSpan.textContent = correctAnswer;
     gameOverMessage.style.display = 'block';
     document.getElementById('restart-game').style.display = 'block';
+
+    if (playerName) {
+        saveScore(playerName, streak);
+    } else {
+        document.getElementById('name-input-container').style.display = 'block';
+        document.getElementById('submit-name').addEventListener('click', () => {
+            const username = document.getElementById('username-input').value;
+            if (username) {
+                playerName = username;
+                localStorage.setItem('playerName', playerName);
+                saveScore(playerName, streak);
+                document.getElementById('name-input-container').style.display = 'none';
+                document.getElementById('game-over-message').style.display = 'none';
+                document.getElementById('restart-game').style.display = 'block';
+            }
+        });
+    }
 }
 
 function displayErrorMessage() {
